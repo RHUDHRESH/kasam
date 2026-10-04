@@ -8,7 +8,7 @@ KASAM uses your phone's screen to write a fresh light pattern into a selfie vide
 
 Published on GitHub Pages from `main` / root. The live original/cut/wrong-code demo and an encoded MP4 test passed; [GitHub Actions verification](https://github.com/RHUDHRESH/kasam/actions/workflows/verify.yml) also passes. Full deployment and device-test evidence is recorded in [VERIFICATION.md](./docs/VERIFICATION.md).
 
-> Phase 1 prototype for the iQOO Hackathon 2026, Open Innovation track. Plain HTML, CSS and JavaScript. No app server. No uploads. No cloud AI. Phone and WhatsApp performance still need real-device measurements.
+> Phase 1 prototype for the iQOO Hackathon 2026, Open Innovation track. Plain HTML, CSS and JavaScript. No app server. No uploads. Phone and WhatsApp performance still need real-device measurements.
 
 ## Why
 
@@ -148,10 +148,6 @@ KASAM explores screen-based capture and offline timing verification. The physica
 - **iProov Flashmark:** [controlled screen illumination for Dynamic Liveness](https://www.iproov.com/biometric-encyclopedia/flashmark). A commercial precedent for screen-to-face reflection checks with cloud verification.
 - **Face Flashing / 2018:** [Face Flashing: a Secure Liveness Detection Protocol based on Light Reflections](https://arxiv.org/abs/1801.01949).
 
-All illustrations in this repository are original SVGs. App screenshots are captured from this build. No external fonts, images, analytics, APIs or CDNs are loaded by the application. The UI certificates use fixed English/Hindi templates; this web prototype does not run an AI model.
-
-## Team
-
-**[names]** — add the three team members and their roles before submitting. Project brief prepared for Joyal, 4 October 2026. [Original project context](./docs/CONTEXT.md).
+All illustrations in this repository are original SVGs. App screenshots are captured from this build. No external fonts, images, analytics, APIs or CDNs are loaded by the application. The UI certificates use fixed English/Hindi templates.
 
 **License:** [MIT](./LICENSE).

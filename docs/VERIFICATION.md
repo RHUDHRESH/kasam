@@ -55,7 +55,7 @@ The browser harness and generated videos live in ignored `output/qa/`. They are 
 
 ## Browser and offline checks
 
-The home and verifier were opened in desktop Chrome and the Codex in-app Chromium browser. The synthetic demo, verdicts, correlation chart, timing strip and bilingual certificates rendered without observed console errors. Certificate copying succeeded. The report link produces a local JSON Blob with its seal filename.
+The home and verifier were opened in desktop Chrome and Chromium. The synthetic demo, verdicts, correlation chart, timing strip and bilingual certificates rendered without observed console errors. Certificate copying succeeded. The report link produces a local JSON Blob with its seal filename.
 
 The automation's download-event capture timed out, and browser policy prevented opening Chrome's internal download manager. **Native download saving and Android Web Share still need a manual device check.** The generated recorder's encoded bytes were independently decoded and verified; that is a codec check, not a claim that every device's download UI was tested.
 

@@ -1,4 +1,4 @@
-const CACHE = 'kasam-v6';
+const CACHE = 'kasam-v7';
 const FILES = [
   './', './index.html', './seal.html', './verify.html', './light.html',
   './css/style.css', './js/code.js', './js/analyze.js', './js/seal.js', './js/verify.js', './js/light.js',

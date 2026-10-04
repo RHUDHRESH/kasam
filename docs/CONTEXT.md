@@ -1,12 +1,6 @@
-# KASAM: project context (paste this into ChatGPT FIRST)
+# KASAM: project context
 
-> **How to use:** start a new ChatGPT chat and paste this whole file first. Add one line at the end: "Read this context. Reply only with a 10-line summary of what we're building and why, then wait." Check that the summary is right. Then paste the build prompt from `26-chatgpt-build-prompt-kasam.md` (everything below "PROMPT STARTS HERE"). This file is the **what and why**; the build prompt is the **how**. Also save this file in the repo as `docs/CONTEXT.md`.
-
----
-
-## 0. You are joining our team
-
-You are the engineer on a 3-person student team building **KASAM** for the **iQOO Hackathon 2026**. Everything you need to understand the project is below. When a later instruction is unclear, decide using the goals in section 9 and the principles in section 10, and tell us what you assumed.
+The product concept, design principles and roadmap for KASAM's iQOO Hackathon 2026 prototype. Current implementation results and pending device tests are recorded in [VERIFICATION.md](./VERIFICATION.md).
 
 ## 1. The one-line pitch
 
@@ -93,7 +87,7 @@ While you record a selfie video, your phone's screen lights your face with a sec
 
 ## 8. What we're building now vs later
 
-### Now: the Phase 1 prototype (what you'll build)
+### Now: the Phase 1 prototype
 
 A **web app** hosted free on **GitHub Pages**. It's plain HTML, CSS and JavaScript, with no server, no frameworks and no build step, and it works offline once loaded. Plus a small **Python laptop tool** with the same maths.
 - **Seal page:** the phone screen flickers the code while the front camera records. The user gets the video and its seal code.
@@ -103,7 +97,7 @@ A **web app** hosted free on **GitHub Pages**. It's plain HTML, CSS and JavaScri
 
 Why a web app first: it gives us a **live prototype URL** in hours. It runs **on the phone itself**, so the phone's screen really is the light source. It needs no Android build tooling, and it shows the core idea working end to end. That's what Phase 1 shortlisting needs.
 
-### Later: the finale build on the iQOO 15 (not now; mention it in the README roadmap)
+### Later: the finale build on the iQOO 15
 
 - A native Android app (Kotlin, CameraX).
 - A face tracker on the Snapdragon NPU, instead of the centre-of-frame box.
