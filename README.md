@@ -6,7 +6,7 @@ KASAM uses your phone's screen to write a fresh light pattern into a selfie vide
 
 **[Open the live demo](https://rhudhresh.github.io/kasam/)** · **[Source repository](https://github.com/RHUDHRESH/kasam)** · **[Verification evidence](./docs/VERIFICATION.md)**
 
-Publishing status: the public repository is created. GitHub Pages is being configured from `main` / root; deployment evidence is recorded in [VERIFICATION.md](./docs/VERIFICATION.md).
+Published on GitHub Pages from `main` / root. The live original/cut/wrong-code demo and an encoded MP4 test passed; [GitHub Actions verification](https://github.com/RHUDHRESH/kasam/actions/workflows/verify.yml) also passes. Full deployment and device-test evidence is recorded in [VERIFICATION.md](./docs/VERIFICATION.md).
 
 > Phase 1 prototype for the iQOO Hackathon 2026, Open Innovation track. Plain HTML, CSS and JavaScript. No app server. No uploads. No cloud AI. Phone and WhatsApp performance still need real-device measurements.
 

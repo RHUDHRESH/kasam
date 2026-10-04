@@ -94,4 +94,16 @@ For each trial, keep the original and forwarded file, exported JSON, device / Ch
 
 ## Publishing
 
-The public repository [RHUDHRESH/kasam](https://github.com/RHUDHRESH/kasam) was created through the signed-in Chrome browser. GitHub Pages will serve the static files from `main` / root at https://rhudhresh.github.io/kasam/. Live deployment checks are recorded here after activation.
+The public repository [RHUDHRESH/kasam](https://github.com/RHUDHRESH/kasam) was created through the signed-in Chrome browser. GitHub Pages is enabled from `main` / root, with enforced HTTPS, at [the live app](https://rhudhresh.github.io/kasam/).
+
+Verified on the deployed app, 4 October 2026:
+
+- Landing page, original illustration and app navigation render under the `/kasam/` project path.
+- Service worker installation reaches **Offline ready**.
+- Synthetic original: **GO**, z **13.62**. Simulated removal of 8–9 s: **TAMPERED**, z **8.14**, **1.0 s removed near 0:08**. Wrong code `3FA9C21B`: **NO-GO**, z **2.47**.
+- The production-recorder MP4 generated from the local canvas test stream is selected through the deployed file picker and decoded locally: seal `4441BADC`, 10-second code, **GO**, z **10.22**, 291 sampled frames, 25.3 fps, lag **1.53 s**. This is an encoded test video, not a physical-camera illumination test. Browser scheduling changes sampled counts and scores slightly between runs.
+- No browser warnings or errors were observed during those live checks.
+- [Initial Pages deployment](https://github.com/RHUDHRESH/kasam/actions/runs/37221457199) and [deployment after CI addition](https://github.com/RHUDHRESH/kasam/actions/runs/37221556734) completed successfully.
+- [Verify KASAM run #1](https://github.com/RHUDHRESH/kasam/actions/runs/37221558464) completed successfully. The workflow checks JavaScript and Python syntax, runs the synthetic-frame self-test, and runs the PRNG/signal parity and asset checks. It repeats on pushes to `main` and pull requests.
+
+The physical Android, optical and WhatsApp acceptance checklist above remains pending. Automated checks do not replace it.
