@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#14121A"><meta name="description" content="KASAM embeds a light code in your selfie video. Check its timing offline, even after forwarding.">
+  <title>KASAM — The video that swears it's real.</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="./index.html"><img src="./icon.svg" alt="" width="28" height="28">KASAM<span class="brand-dot">✦</span></a><span class="edition">A PHONE-FIRST EXPERIMENT</span><a class="nav-link" href="./verify.html">Verify a video <span aria-hidden="true">↗</span></a></header>
+  <main class="home">
+    <section class="hero">
+      <div class="hero-copy"><p class="eyebrow"><span class="live-dot"></span> LIGHT AS A WITNESS</p><h1>The video that<br>swears it's <em>real.</em></h1><p class="intro">A little light. A lasting oath.<br>Your screen writes a secret code into your video. An edit makes the oath break.</p><div class="hero-actions"><a class="button primary" href="./seal.html">Seal a video <span aria-hidden="true">↗</span></a><a class="button secondary" href="./verify.html">Verify a video <span aria-hidden="true">→</span></a></div><p class="privacy"><span aria-hidden="true">⌁</span> On your phone. Offline. Nothing uploaded.</p><a class="text-link" href="./light.html">Use another screen? Try Light-only mode →</a></div>
+      <figure class="hero-art"><img src="./docs/assets/oath.svg" alt="A phone projects a gold light pattern onto a face. The recorded brightness carries the same pattern." width="620" height="600"><figcaption><span>01 / CAPTURE THE LIGHT</span><span class="gold">Kasam se.</span></figcaption></figure>
+    </section>
+    <section class="story-section"><div class="section-heading"><p class="eyebrow">THE IDEA, IN FOUR BEATS</p><h2>Let the pixels<br>keep their promise.</h2><p>A file can lose its metadata.<br>Light becomes part of the picture.</p></div><div class="steps"><article><span class="step-number">01</span><h3>Your screen speaks.</h3><p>A fresh seal code controls a small brightness flicker, 15 times a second.</p></article><article><span class="step-number">02</span><h3>Your face reflects.</h3><p>The screen lights your face. Your camera records the pattern into the pixels.</p></article><article><span class="step-number">03</span><h3>The code travels.</h3><p>Check the downloaded video, including a compressed copy. Real WhatsApp tests are still needed.</p></article><article><span class="step-number">04</span><h3>An edit breaks time.</h3><p>The verifier looks for the pattern. A timing jump can reveal a cut or insertion.</p></article></div></section>
+    <section class="challenge"><div><p class="eyebrow">TRY TO BREAK THE OATH</p><h2>One second.<br>A different story.</h2><p>Remove a second and watch the light code's timing jump. Try a clearly labelled synthetic test before recording your own video.</p><a href="./verify.html?demo=1" class="button secondary">Run the demo <span aria-hidden="true">→</span></a></div><div class="challenge-visual" aria-label="Illustration of an intact timeline and one with a cut"><p>SEALED <span class="green">●</span></p><div class="code-strip"></div><p>ONE SECOND REMOVED <span class="red">●</span></p><div class="code-strip broken"></div><span class="cut-label">↑ Timing jumps. Kasam toot gayi.</span></div></section>
+    <section class="honesty"><span class="eyebrow">A WORKING PROTOTYPE. AN HONEST PROMISE.</span><p>KASAM checks for a known light pattern and timing breaks. It does not prove that a statement is true, authenticate a person's identity, or detect every edit. Keep the seal code with people you trust.</p></section>
+  </main>
+  <footer><span>KASAM · THE VIDEO TAKES AN OATH.</span><span data-offline>Preparing offline mode…</span></footer>
+  <script type="module">import { initOffline } from './js/code.js'; initOffline();</script>
+</body>
+</html>
