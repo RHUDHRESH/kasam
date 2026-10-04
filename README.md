@@ -1,147 +1,191 @@
-<p align="center"><img src="./docs/assets/readme-cover.svg" alt="KASAM. The video that swears it's real. A little light. A lasting oath." width="1200"></p>
+<p align="center"><img src="./docs/assets/readme-cover.svg" alt="KASAM — The video that swears it's real. A little light. A lasting oath." width="1200"></p>
 
-# KASAM: the video that swears it's real.
+# KASAM
 
-KASAM uses your phone's screen to write a fresh light pattern into a selfie video's pixels. Its offline verifier looks for that pattern and timing jumps that can reveal cuts or insertions.
+**The video that swears it's real.**
 
-**[Open the live demo](https://rhudhresh.github.io/kasam/)** · **[Source repository](https://github.com/RHUDHRESH/kasam)** · **[Verification evidence](./docs/VERIFICATION.md)**
+KASAM explores a simple idea: use the screen beside your phone's camera to put a light code into a recording. Later, look for that code and timing changes that can reveal a cut or insertion. Capture and verification run on your device.
 
-Published on GitHub Pages from `main` / root. The live original/cut/wrong-code demo and an encoded MP4 test passed; [GitHub Actions verification](https://github.com/RHUDHRESH/kasam/actions/workflows/verify.yml) also passes. Full deployment and device-test evidence is recorded in [VERIFICATION.md](./docs/VERIFICATION.md).
+**[Open the app](https://rhudhresh.github.io/kasam/)** · **[Break the demo](https://rhudhresh.github.io/kasam/verify.html?demo=1)** · **[Read the evidence](./docs/VERIFICATION.md)**
 
-> Phase 1 prototype for the iQOO Hackathon 2026, Open Innovation track. Plain HTML, CSS and JavaScript. No app server. No uploads. Phone and WhatsApp performance still need real-device measurements.
+[![Verify KASAM](https://github.com/RHUDHRESH/kasam/actions/workflows/verify.yml/badge.svg)](https://github.com/RHUDHRESH/kasam/actions/workflows/verify.yml)
+
+> A working web prototype for the iQOO Hackathon 2026, Open Innovation track. Synthetic signals, encoded test videos and desktop offline use have been checked. Physical phone capture and WhatsApp forwarding still require measurements.
+
+[Try it](#try-it-in-2-minutes) · [Results](#results) · [Run locally](#run-locally) · [Laptop verifier](#laptop-verifier) · [Limits](#honest-limits)
 
 ## Why
 
-**One second can change a story.** Imagine a complaint, an interview or a proof-of-work selfie. Remove the sentence before a pause, forward the clip, and the person in it suddenly seems to be saying something else.
+**One second can change a story.** Remove a sentence from an interview, forward the clip, and the person in it can appear to mean something else.
 
-Convincing fake videos are easier to make. Passive detectors offer a probabilistic judgement; metadata-based credentials depend on forwarding tools preserving those credentials. Re-encoding can discard metadata. A visible logo can be cropped or copied.
+A recording could carry more than the words: a witness in its light. The screen illuminates the face; the face reflects a fresh pattern; the camera records it in the pixels. A cut can change the pattern's timing.
 
-KASAM asks a different question: **can the original recording carry a witness?** The screen is already beside the camera. The face already reflects its light. Put a known pattern into that light, and the camera records the evidence inside the pixels.
-
-“Kasam” means “I swear.” The video takes an oath. A timing jump makes the oath break: **Kasam toot gayi.**
+“Kasam” means “I swear.” The video takes an oath. When the verifier detects a timing break, the app says **Kasam toot gayi** — the oath broke.
 
 ## How it works
 
-1. **The screen flickers a fresh code.** A random 32-bit seed, shown as eight hexadecimal characters, selects a ±1 pattern at 15 Hz.
-2. **The light reaches your face.** A small brightness change rides on its reflection. Most of the screen remains available as the light source.
-3. **The camera puts it in the pixels.** The video carries a time-varying brightness signal, rather than a metadata tag. Compression resilience is a hypothesis to measure on each target device and forwarding path.
-4. **The verifier follows the timing.** A matching pattern suggests the light code is present. A shift between matching windows can expose a cut or insertion.
+1. **Write the code.** A fresh eight-character seal code selects a brightness pattern that changes 15 times per second.
+2. **Record the reflection.** The phone's front camera records while the screen displays the pattern.
+3. **Find the match.** The verifier measures brightness in the video and compares it with the expected pattern.
+4. **Follow the timing.** Matching windows with a sudden alignment shift can reveal a cut or insertion.
 
 ![Screen → reflection → video → offline verification](./docs/assets/how-it-works.svg)
 
-The verifier averages luma in the centre 50% × 50% of each decoded frame, resamples at 15 Hz, subtracts a centred one-second moving average, and divides by the signal's standard deviation. It slides the expected pseudo-random code across the signal. A z-score measures how strongly the best correlation stands out from the other candidate lags; it is **not a calibrated probability of authenticity**. Four-second windows, stepped once per second, search within ±3 seconds for alignment jumps. The prototype's thresholds are `NO-GO < 3.5`, `WEAK 3.5–5`, and `GO > 5`, with qualifying timing jumps producing `TAMPERED`.
-
-The original window algorithm labels the start of a matching window, which can precede the actual cut. Both implementations also fit a switch between the pre-edit and post-edit alignments inside that window. Reports preserve the original `atVideoTime` and add `boundaryTime`; the UI labels the latter. See [the exact implementation notes](./docs/VERIFICATION.md).
-
-| Verdict | What the prototype found |
+| Feature | What you can do |
 | --- | --- |
-| **GO** · Sealed and untouched | Strong code match; no detected timing jumps in the checked windows |
-| **TAMPERED** · Oath broken | Code present, with a qualifying alignment jump |
-| **WEAK** · Seal is faint | Possible match; repeat with better lighting or stronger amplitude |
-| **NO-GO** · No seal | No match for this code; it can also mean wrong code or poor recording conditions |
+| [Seal](https://rhudhresh.github.io/kasam/seal.html) | Record with the front camera and microphone; save the video and its seal code |
+| [Verify](https://rhudhresh.github.io/kasam/verify.html) | Analyse a local file; inspect the timeline, correlation chart and English/Hindi certificate |
+| [Light-only](https://rhudhresh.github.io/kasam/light.html) | Display the code on one screen while a separate device records |
+| Simulate an edit | Remove a time interval from the analysis without changing the video file |
+| Offline mode | Use the cached app after the first successful online load |
+| Report export | Copy the certificate or export the measurements as JSON |
+
+<details>
+<summary>How the verifier scores a clip</summary>
+
+The verifier averages luma in the centre 50% × 50% of decoded frames, resamples at 15 Hz, removes a centred one-second moving average, and normalises by the signal's standard deviation. It correlates the signal with a ±1 sequence regenerated from the 32-bit seed using mulberry32.
+
+The z-score describes how much the strongest correlation stands out from other candidate lags. It is **not a probability of authenticity**. Four-second windows, stepped every second, search within ±3 seconds for changes in alignment.
+
+| Verdict | Meaning |
+| --- | --- |
+| **NO-GO** | z < 3.5: no matching seal found for this code |
+| **WEAK** | 3.5 ≤ z ≤ 5, without a qualifying timing jump: faint match |
+| **GO** | z > 5, without a qualifying timing jump: strong match |
+| **TAMPERED** | z ≥ 3.5 with a qualifying timing jump: code present, timing broken |
+
+The app labels GO as “Sealed and untouched.” That means no timing break was detected in the checked windows; it does not guarantee the absence of every edit. Cut locations are estimates. Reports retain the window's `atVideoTime` and a refined `boundaryTime` used by the display. [Implementation and sampling notes](./docs/VERIFICATION.md#two-sampling-fixes).
+
+</details>
 
 ## Try it in 2 minutes
 
-**No camera handy?** Open **Verify a video → Try a synthetic light-code demo**. It produces a measured result from deterministic samples, labelled as a synthetic test. Turn on **Simulate an edit**, use **8 to 9 seconds**, and analyse again. Then enter `3FA9C21B` to test a wrong seal. These results demonstrate the maths; they do not demonstrate a real optical capture.
+**Start with the demo — no camera required.**
 
-For the real test:
+1. [Open the synthetic demo](https://rhudhresh.github.io/kasam/verify.html?demo=1). It starts with seal `12345678` and returns **GO**.
+2. Enable **Simulate an edit**, leave the interval at **8–9 seconds**, and press **Analyse video**. Expect **TAMPERED**, with **1.0 s removed near 0:08**.
+3. Disable the simulation, change the code to `3FA9C21B`, and press **Analyse video**. Expect **NO-GO**.
 
-1. Open **Seal a video** in Chrome on Android, set screen brightness to maximum, and choose 10% / 20 seconds. Hold the phone 25–35 cm away indoors and keep your face centred.
-2. Allow camera and microphone access. Keep the page visible for the one-second lead-in and 20-second light sequence.
-3. Download the recording. Keep its eight-character seal code separately with your trusted verifier. Use **Verify now** and choose that file to check the original first.
-4. Send the video to yourself through WhatsApp, download the received copy, and verify it with the same code. **Record the actual result below.**
-5. Enable **Simulate an edit**, remove seconds 8–9, and analyse again. The simulation drops samples and closes the time gap; it never alters your file.
+These are deterministic sample tests, clearly labelled in the app. They exercise the maths without representing a camera recording.
 
-Downloaded filenames include the seal code so you can pair the file and report. Rename a download before sharing it publicly if you want the code kept separately. The app's Share button uses a generic filename.
+**Then try your own recording.**
 
-**MP4 vs WebM:** the recorder tries MP4/H.264, MP4, WebM/VP9 and WebM in that order. WhatsApp may not accept `.webm`. In **Light-only mode**, use a laptop, tablet or second phone as the light source and the normal camera app on the recording phone to produce MP4. Start the camera before starting the light. A single phone cannot keep this webpage visible while its native camera covers it; switching away interrupts and discards the sequence.
+1. Open [Seal a video](https://rhudhresh.github.io/kasam/seal.html) in Chrome on Android. Set the phone's screen brightness to maximum and choose **10% / 20 seconds**. Indoors, start at 25–35 cm with your face centred.
+2. Allow camera and microphone access. Keep the page visible through the one-second lead-in and the light sequence.
+3. Download the video and save its code. Select **Verify now**, choose the downloaded file, and press **Analyse video**.
+4. Inspect the score and timeline. Export the JSON to keep the measurements. Repeat with **Simulate an edit** to compare the original with a cut.
 
-**Privacy & offline:** videos are decoded locally, never uploaded. After the first successful online load, the service worker caches every app page and its assets, so seal, light and verify work offline. Recent codes are stored in this browser's local storage; clearing browser data removes them. The PWA manifest supports installation on compatible browsers. Fullscreen and wake lock are optional browser capabilities.
+**Keep the code separate when sharing.** Downloaded filenames include the seal code; rename the file before public sharing if you want to keep the code private. The Share button uses a generic filename. Recent codes are saved in this browser's local storage.
 
-**GitHub Pages / local preview:** publish this repository's `main` branch from `/ (root)` in **Settings → Pages → Deploy from a branch**. `.nojekyll` keeps the files as authored. Camera access needs HTTPS, or localhost for desktop testing. For local use:
+**If your recorder saves WebM:** support varies by browser. KASAM tries MP4/H.264, MP4, WebM/VP9, then WebM. For a native-camera MP4, use [Light-only mode](https://rhudhresh.github.io/kasam/light.html) on a laptop, tablet or second phone beside the recording device. Start the camera first, then the light. Switching away from the light page interrupts its sequence.
 
-```bash
-python -m http.server 8080 --bind 127.0.0.1
-# Open http://127.0.0.1:8080/ in Chrome.
-```
-
-See [GitHub's publishing instructions](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). There is no npm install, bundler or application backend.
+**To test a forwarded copy:** send the video to yourself through WhatsApp, download the received file, and verify it with the same code and duration. This is a test procedure, not a claim of validated WhatsApp performance.
 
 ## Results
 
-**Synthetic reference checks, measured on 4 October 2026.** The frame generator puts approximately 4% brightness modulation into a face-sized centre region, with deterministic noise and slow exposure drift. These are algorithm checks, not a phone recording or WhatsApp benchmark.
+Measured on **4 October 2026**. These results have different scopes; each is identified below.
 
-| Test | Amplitude | Result | z | Cut found at |
-| --- | --- | --- | --- | --- |
-| Synthetic original, seed `12345678` | ≈4% centre-region modulation | GO | 13.620 | None detected |
-| Same samples, remove 8–9 s | ≈4% centre-region modulation | TAMPERED | 8.143 | 8.0 s boundary; 1.0 s removed |
-| Same samples, wrong seed `3FA9C21B` | ≈4% centre-region modulation | NO-GO | 2.473 | Not analysed |
+| Test | Verdict | z-score | Detected change |
+| --- | --- | ---: | --- |
+| Synthetic original, seed `12345678` | **GO** | 13.620 | No timing break detected |
+| Same samples, remove 8–9 s | **TAMPERED** | 8.143 | 1.0 s removed near 8.0 s |
+| Same samples, wrong seed `3FA9C21B` | **NO-GO** | 2.473 | No matching seal |
+| H.264 MP4 from a controlled canvas recording, checked in the deployed browser | **GO** | 10.22 | No timing break detected |
+| The same MP4, decoded by the Python verifier | **GO** | 10.300 | No timing break detected |
 
-**Encoded video check:** the deployed verifier decoded an H.264 MP4 produced by the recorder's controlled canvas test stream: **GO**, z **10.22**, 291 sampled frames, with the code starting at **1.53 s**. This verifies the recorder-to-verifier file path.
+The synthetic reference has about 4% brightness modulation in its centre region, with deterministic noise and slow drift. The MP4 check exercises the production recorder and the local-file verification path using a controlled test stream. **Neither is a physical-camera illumination test.** Browser frame scheduling can change sample counts and scores slightly between runs.
 
-**Physical capture and WhatsApp forwarding have not yet been measured.** Device-specific results will be published after those tests.
+Desktop checks also confirmed cached offline operation, a completed light-only sequence, certificate copying, decoded-frame sampling and the seeking fallback. GitHub Actions runs the signal self-test, JavaScript/Python parity, syntax and asset checks on every push to `main` and every pull request.
 
-The screen setting is `level = 1 − amp + amp × code`, so 10% switches between 80% and 100% grey, around a 90% lead-in level. It does not mean the face's measured brightness changes by 10%.
+**Not yet measured:** reflected light on a physical Android phone, WhatsApp recompression, Android installation, gallery/download saving and native file sharing. [Full verification record](./docs/VERIFICATION.md) · [Reference measurements](./docs/verification-results.json) · [Automated checks](https://github.com/RHUDHRESH/kasam/actions/workflows/verify.yml).
 
-Keep each exported JSON report alongside device, Chrome version, lighting, distance, codec, and forwarding details. [Verification evidence](./docs/VERIFICATION.md) distinguishes pure-signal checks, decoded-video checks and still-pending physical tests.
+<details>
+<summary>View the app screenshots</summary>
 
-## Laptop tool
+Screenshots captured from the working app. The cut result shown here uses the synthetic demo.
 
-Python 3.9+ and an OpenCV-compatible video codec are required. OpenCV is pinned below version 5. The tool intentionally uses the same centre region as the web app, with no face tracker.
+<p><img src="./docs/assets/app-home.jpg" alt="KASAM desktop homepage" width="1000"></p>
+<p><img src="./docs/assets/app-mobile.jpg" alt="KASAM homepage at a 390 by 844 phone viewport" width="300"></p>
+<p><img src="./docs/assets/app-cut.jpg" alt="Synthetic demo showing an oath broken by a one-second cut near eight seconds" width="700"></p>
+
+</details>
+
+## Run locally
+
+The app is plain HTML, CSS and JavaScript. It needs no package installation, bundler or application backend.
+
+```bash
+git clone https://github.com/RHUDHRESH/kasam.git
+cd kasam
+python -m http.server 8080 --bind 127.0.0.1
+```
+
+Open [localhost:8080](http://127.0.0.1:8080/) in Chrome. Camera access requires HTTPS or localhost. The live site uses GitHub Pages from **main / root** with `.nojekyll`.
+
+After the footer says **Offline ready**, the app pages and assets are cached. Offline operation still requires the browser's camera permissions and media support. Clearing site data removes the cache and recent seal codes. Videos are processed locally; the app sends no video uploads or analytics and loads no third-party runtime assets.
+
+## Laptop verifier
+
+The Python tool uses the same centre-region analysis as the browser. **Python 3.13** is tested in CI; video decoding requires a codec supported by OpenCV.
+
+From the repository root, create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate it with `source .venv/bin/activate` on macOS/Linux, or `.\.venv\Scripts\Activate.ps1` in Windows PowerShell. Then:
 
 ```bash
 python -m pip install -r tools/requirements.txt
 python tools/kasam_check.py --selftest
-python tools/kasam_check.py recording.mp4 --seal 3FA9C21B
-python tools/kasam_check.py recording.mp4 --seal 3FA9C21B --amp 0.10 --seconds 20 --cut 8:9
-python tools/kasam_check.py recording.mp4 --seal 3FA9C21B --json report.json
+python tools/kasam_check.py recording.mp4 --seal 3FA9C21B --seconds 20 --json report.json
+python tools/kasam_check.py recording.mp4 --seal 3FA9C21B --seconds 20 --cut 8:9
 ```
 
-The CLI prints window scores, edit estimates and a final verdict. `--amp` records metadata; normalized matching does not depend on amplitude. `--selftest` checks the exact mulberry32 bits, synthesises frames in memory, measures their luma, and asserts GO / TAMPERED / NO-GO plus cut localisation.
+Use the actual seal code and duration from your recording. `--cut 8:9` simulates a removal during analysis; it never overwrites the video. `--amp` stores the screen setting as report metadata and does not change the normalised matching score. The CLI prints window matches, estimated edits and the final verdict.
 
-Optional contributor check, if Node is already installed (it is not an app dependency):
+With **Node.js 24**, run the development parity and asset checks:
 
 ```bash
 node tools/check.mjs
 ```
 
+Set `KASAM_PYTHON` to your virtual environment's Python executable if the command named `python` points elsewhere. Node is a development dependency only.
+
 ## Honest limits
 
-- **Strong sunlight can drown the screen's light.** Distance, face motion, exposure control, dropped code transitions and compression can weaken the match. Better optics matter more than the badge.
-- **The seal-code holder must be trusted.** This 32-bit seed and mulberry32 are a reproducible demo pattern, not a cryptographically secure challenge. Someone who knows or estimates the pattern can synthesize it.
-- **The intended check is recording integrity, not truth.** A GO means a strong pattern match without detected timing jumps; it does not prove identity, factual truth, live presence, the authenticity of audio, or absence of every kind of edit.
-- **The prototype uses the centre of the frame, not a face tracker.** A bright background or the wrong framing can dominate the signal. It cannot yet localize a pasted face or object spatially.
-- **Windowed matching has blind spots.** Short edits, changes near clip ends, replays, audio-only edits, and shifts beyond the ±3-second search may be missed. Real frame timing can also cause false alarms. A partial clip can match; GO is not a cryptographic guarantee of completeness.
-- **Noise can produce false edit flags.** An uncut synthetic clip with heavy added noise returned TAMPERED in a stress test. The prescribed thresholds are a research starting point and need calibration on real devices.
-- **Seeds are random for each recording.** Production needs a reviewed threat model, secured HMAC challenge generation, binding to capture and time, secure keystore keys, and replay protection. Replacing a PRNG alone is insufficient.
-- **Phone and WhatsApp success are unproven here.** Synthetic tests are useful engineering evidence, and cannot substitute for physical-device measurements.
-- **The visible light may be uncomfortable.** Stop if it bothers you. This prototype is not intended as a medical, legal or KYC decision system.
+- **A match is evidence of a light pattern.** It does not prove identity, liveness, factual truth or audio authenticity. Replay and audio-only edits can pass.
+- **The pattern can be forged.** A 32-bit seed and mulberry32 are reproducible, not cryptographically secure. Someone who learns or estimates the code can synthesise it.
+- **Framing and lighting matter.** The verifier uses the centre of the frame, not a face tracker. Sunlight, motion, distance, exposure control and compression can weaken the signal.
+- **Windowed matching has blind spots.** Short edits, changes near clip ends and large timing shifts can be missed. A partial clip can match; GO does not establish completeness.
+- **False edit flags are possible.** Heavy noise produced TAMPERED on an uncut synthetic signal in a recorded stress test. Thresholds need physical-device calibration.
+- **Flicker may be uncomfortable.** Stop if it bothers you. This prototype is not validated for KYC, legal or medical decisions.
 
-## Roadmap (iQOO 15 native app)
+The 10% screen setting alternates normalised grey levels of 0.8 and 1.0 around a 0.9 lead-in. It does not imply a 10% change in reflected face brightness.
 
-The Phase 1 prototype isolates the physical signal. The finale build can add an on-device model where it has a useful job:
+## Roadmap
 
-- **Android / Kotlin / CameraX:** controlled capture, frame timestamps and better exposure handling.
-- **Face model on the Snapdragon NPU:** measure the face rather than an assumed centre rectangle.
-- **Llama 3.2 on-device:** explain measured results in Hindi and English; it must not invent evidence or decide integrity by itself.
-- **Replay check:** explore how a flat screen and a 3D face distribute reflected light. Validate before making liveness claims.
-- **“Words in light”:** investigate binding the challenge to the spoken content, with secured HMAC keys in the phone's keystore.
-- **Office Kit verification desk:** move the recording and report to a laptop for a judge-friendly evidence view.
-- **Spatial code heatmap:** measure per-region correlations to explore pasted content. This stretch feature is not included in the current verifier.
+The next stage is a native Android implementation on the iQOO 15:
 
-The planned live challenge: **“Fool KASAM, win ₹1,000.”** A judge chooses an attack, a teammate performs it, and the verifier shows its evidence before the card is revealed. The current prototype supports a transparent, reproducible cut demonstration; the other attacks need validated implementations first.
+- **CameraX capture:** tighter control over timestamps and exposure.
+- **Face-region tracking:** measure the face instead of a fixed centre rectangle.
+- **Secured challenges:** investigate keystore-backed HMAC keys, capture binding and replay protection.
+- **Spatial verification:** explore per-region matching for pasted content.
+- **On-device explanations:** explain measured evidence in English and Hindi without inventing results.
+- **Office Kit verification desk:** transfer recordings and reports to a laptop for inspection.
 
-![The working KASAM app, captured from this build](./docs/assets/app-home.jpg)
+These are planned capabilities. The current app demonstrates light-code matching and temporal cut/insertion checks.
 
 ## Prior art and credits
 
-KASAM explores screen-based capture and offline timing verification. The physical watermarking idea has strong prior art; this project does not claim to have invented coded illumination.
+Coded illumination has substantial prior art. KASAM applies the idea to a screen-based capture experiment and offline timing verification.
 
-- **Cornell noise-coded illumination / SIGGRAPH 2025:** [Hiding secret codes in light protects against fake videos](https://news.cornell.edu/stories/2025/07/hiding-secret-codes-light-protects-against-fake-videos). Programmable illumination embeds codes into recorded scenes. KASAM's inspiration and primary credit.
-- **Columbia VeriLight / CCS 2025:** [Combating Falsification of Speech Videos with Live Optical Signatures](https://mobilex.cs.columbia.edu/verilight/). Event-bound physical optical signatures for speech-video verification.
-- **iProov Flashmark:** [controlled screen illumination for Dynamic Liveness](https://www.iproov.com/biometric-encyclopedia/flashmark). A commercial precedent for screen-to-face reflection checks with cloud verification.
-- **Face Flashing / 2018:** [Face Flashing: a Secure Liveness Detection Protocol based on Light Reflections](https://arxiv.org/abs/1801.01949).
+- [Cornell: noise-coded illumination, SIGGRAPH 2025](https://news.cornell.edu/stories/2025/07/hiding-secret-codes-light-protects-against-fake-videos) — the project's primary inspiration for embedding evidence in light.
+- [Columbia: VeriLight, CCS 2025](https://mobilex.cs.columbia.edu/verilight/) — physical optical signatures for speech-video integrity.
+- [iProov: Flashmark](https://www.iproov.com/biometric-encyclopedia/flashmark) — controlled screen illumination for dynamic liveness checks.
+- [Face Flashing, 2018](https://arxiv.org/abs/1801.01949) — liveness detection through light reflections.
 
-All illustrations in this repository are original SVGs. App screenshots are captured from this build. No external fonts, images, analytics, APIs or CDNs are loaded by the application. The UI certificates use fixed English/Hindi templates.
+The illustrations are original SVGs; the screenshots are captures of the app. Certificates use fixed English/Hindi templates.
 
 **License:** [MIT](./LICENSE).
