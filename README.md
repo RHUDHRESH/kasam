@@ -77,15 +77,9 @@ See [GitHub's publishing instructions](https://docs.github.com/en/pages/getting-
 | Same samples, remove 8–9 s | ≈4% centre-region modulation | TAMPERED | 8.143 | 8.0 s boundary; 1.0 s removed |
 | Same samples, wrong seed `3FA9C21B` | ≈4% centre-region modulation | NO-GO | 2.473 | Not analysed |
 
-**Team's real-device tests — pending. No result is implied by the empty rows.**
+**Encoded video check:** the deployed verifier decoded an H.264 MP4 produced by the recorder's controlled canvas test stream: **GO**, z **10.22**, 291 sampled frames, with the code starting at **1.53 s**. This verifies the recorder-to-verifier file path.
 
-| Test | Amplitude | Result | z | Cut found at |
-| --- | --- | --- | --- | --- |
-| iQOO 15 / Chrome / original / indoor | 10% screen setting | [fill in] | [fill in] | [fill in] |
-| Same video after WhatsApp forwarding | 10% screen setting | [fill in] | [fill in] | [fill in] |
-| Original with simulated 8–9 s cut | 10% screen setting | [fill in] | [fill in] | [fill in] |
-| WhatsApp copy with simulated 8–9 s cut | 10% screen setting | [fill in] | [fill in] | [fill in] |
-| Real recording / wrong seal code | 10% screen setting | [fill in] | [fill in] | [fill in] |
+**Physical capture and WhatsApp forwarding have not yet been measured.** Device-specific results will be published after those tests.
 
 The screen setting is `level = 1 − amp + amp × code`, so 10% switches between 80% and 100% grey, around a 90% lead-in level. It does not mean the face's measured brightness changes by 10%.
 
@@ -120,7 +114,7 @@ node tools/check.mjs
 - **Windowed matching has blind spots.** Short edits, changes near clip ends, replays, audio-only edits, and shifts beyond the ±3-second search may be missed. Real frame timing can also cause false alarms. A partial clip can match; GO is not a cryptographic guarantee of completeness.
 - **Noise can produce false edit flags.** An uncut synthetic clip with heavy added noise returned TAMPERED in a stress test. The prescribed thresholds are a research starting point and need calibration on real devices.
 - **Seeds are random for each recording.** Production needs a reviewed threat model, secured HMAC challenge generation, binding to capture and time, secure keystore keys, and replay protection. Replacing a PRNG alone is insufficient.
-- **Phone and WhatsApp success are unproven here.** Synthetic tests are useful engineering evidence, and cannot substitute for the team running the real-device acceptance checklist.
+- **Phone and WhatsApp success are unproven here.** Synthetic tests are useful engineering evidence, and cannot substitute for physical-device measurements.
 - **The visible light may be uncomfortable.** Stop if it bothers you. This prototype is not intended as a medical, legal or KYC decision system.
 
 ## Roadmap (iQOO 15 native app)

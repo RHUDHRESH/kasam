@@ -48,7 +48,7 @@ While you record a selfie video, your phone's screen lights your face with a sec
 1. **The screen is a light source.** The phone's screen is very bright (the iQOO 15 reaches 6,000 nits). During a selfie video, it lights the face.
 2. **We hide a code in that light.** The screen's brightness wobbles by a few percent in a secret pseudo-random pattern of +1 and −1 steps, 15 steps per second. Each recording gets a fresh random **seed**, shown to the user as an 8-character **seal code** such as `3FA9C21B`. The seed fully determines the pattern.
 3. **The face reflects the code into the camera.** The face gets very slightly brighter and darker in that exact pattern. The camera records it, so the code is now inside every frame.
-4. **It survives compression.** Video compression (WhatsApp) throws away fine detail, but a whole face getting brighter or darker over time is coarse, so it survives. We confirmed this in a simulation: a ±10% code survived WhatsApp-quality compression, and 1-second and 2-second cuts were located correctly with no false alarms. The real-phone WhatsApp test is being run by the team.
+4. **Compression resilience is a test target.** Averaging brightness over a large region may preserve a measurable signal after compression. Encoded test videos have been verified; physical-camera and WhatsApp-forwarded recordings still require measurements. See [the recorded checks](./VERIFICATION.md).
 5. **Verification is correlation.**
    - The verifier measures the face's brightness in every frame, giving a signal over time.
    - It regenerates the expected pattern from the seal code and slides it along the signal to find where they match.
@@ -114,9 +114,9 @@ In priority order:
 1. **It works on a real phone:** open the GitHub Pages link on an Android phone in Chrome, seal a 20-second selfie, verify it, and get **GO with z > 5** at 10% amplitude indoors.
 2. **It catches a cut:** the same video with "Simulate an edit" (8 to 9 s) gives **TAMPERED** with the marker within ±1.5 s of 8 s.
 3. **A wrong seal code gives NO-GO**, which proves the code is secret and specific.
-4. **It survives WhatsApp:** a video sent through WhatsApp and downloaded still verifies. The team fills the README table with real results.
+4. **It survives WhatsApp:** a video sent through WhatsApp and downloaded still verifies. This is an acceptance target; physical-device measurements have not yet been recorded.
 5. **Judges get it in 30 seconds:** the UI and README are clear, honest and good-looking, with no jargon on screen.
-6. **It's honest:** limits are stated, prior art is credited, and no fake numbers appear anywhere. Placeholder numbers are marked `[fill in]`.
+6. **It's honest:** limits are stated, prior art is credited, and no fake numbers appear anywhere. Publish measured results with their test conditions, and describe untested conditions explicitly.
 
 ## 10. Principles (use these to make decisions)
 

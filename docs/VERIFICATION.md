@@ -90,7 +90,7 @@ The following require a physical Android phone and are **pending**:
 - Native-camera MP4 captured with a second screen in Light-only mode.
 - WhatsApp-forwarded copies, with the real scores entered in the README.
 
-For each trial, keep the original and forwarded file, exported JSON, device / Chrome version, brightness setting, amplitude, room lighting, distance and codec. Do not replace pending rows with synthetic numbers.
+For each trial, keep the original and forwarded file, exported JSON, device / Chrome version, brightness setting, amplitude, room lighting, distance and codec. Report physical-device measurements separately from synthetic results.
 
 ## Publishing
 
