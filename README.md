@@ -105,14 +105,14 @@ Desktop checks also confirmed cached offline operation, a completed light-only s
 Screenshots captured from the working app. The cut result shown here uses the synthetic demo.
 
 <p><img src="./docs/assets/app-home.jpg" alt="KASAM desktop homepage" width="1000"></p>
-<p><img src="./docs/assets/app-mobile.jpg" alt="KASAM homepage at a 390 by 844 phone viewport" width="300"></p>
+<p><img src="./docs/assets/app-mobile.jpg" alt="KASAM mobile homepage" width="300"></p>
 <p><img src="./docs/assets/app-cut.jpg" alt="Synthetic demo showing an oath broken by a one-second cut near eight seconds" width="700"></p>
 
 </details>
 
 ## Run locally
 
-The app is plain HTML, CSS and JavaScript. It needs no package installation, bundler or application backend.
+The app is plain HTML, CSS and JavaScript. It needs no package installation, bundler or application backend. With Git and Python installed:
 
 ```bash
 git clone https://github.com/RHUDHRESH/kasam.git
